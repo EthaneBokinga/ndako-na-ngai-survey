@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Admin — Ndako na Ngai</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .admin-wrap{max-width:1100px;margin:24px auto;padding:18px;background:#fff;border-radius:12px}
+      table{width:100%;border-collapse:collapse}
+      th,td{padding:8px;border-bottom:1px solid #eef}
+      .stat{display:flex;gap:12px;flex-wrap:wrap}
+      .stat .card{padding:12px;border-radius:10px;background:#f8fafc}
+      .login{max-width:420px;margin:60px auto;padding:18px;background:#fff;border-radius:10px}
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand"><div class="logo"><i class="fas fa-house"></i></div><div class="title">Admin — Ndako na Ngai</div></div>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <div id="adminArea"></div>
+      </div>
+    </main>
+
+    <!-- Firebase SDKs for admin (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+      const adminArea = document.getElementById('adminArea');
+
+      function renderLogin(){
+        adminArea.innerHTML = `
+          <div class="login">
+            <h3>Connexion administrateur</h3>
+            <p>Utilisez un compte administrateur (créé dans la console Firebase) pour vous connecter.</p>
+            <label>Email</label>
+            <input id="adminEmail" />
+            <label>Mot de passe</label>
+            <input id="adminPass" type="password" />
+            <div style="margin-top:10px"><button id="btnLogin" class="btn">Se connecter</button></div>
+            <div id="loginMsg" style="margin-top:8px;color:#b91c1c"></div>
+          </div>`;
+
+        document.getElementById('btnLogin').addEventListener('click', function(){
+          const email = document.getElementById('adminEmail').value.trim();
+          const pass = document.getElementById('adminPass').value.trim();
+          if(!email || !pass) { document.getElementById('loginMsg').textContent = 'Email et mot de passe requis'; return; }
+          window.firebaseAuth.signInWithEmailAndPassword(email, pass).then(()=>{
+            renderAdmin();
+          }).catch(err=>{ document.getElementById('loginMsg').textContent = 'Erreur de connexion: '+err.message; });
+        });
+      }
+
+      function renderAdmin(){
+        adminArea.innerHTML = '<div class="admin-wrap"><h2>Chargement des réponses...</h2></div>';
+        // fetch from Firestore if configured, else fallback to localStorage
+        if(window.firebaseDB){
+          window.firebaseDB.collection('surveys').orderBy('_ts','desc').get().then(qs=>{
+            const entries = qs.docs.map(d=>({id:d.id,data:d.data()}));
+            showAdminEntries(entries);
+          }).catch(err=>{
+            adminArea.innerHTML = '<div class="login"><h3>Erreur</h3><p>'+err.message+'</p></div>';
+          });
+        } else {
+          const raw = localStorage.getItem('ndaSurvey');
+          const entries = raw ? JSON.parse(raw) : [];
+          // adapt to same format
+          const mapped = entries.map((e,i)=>({id:i,data:Object.assign({ts:e.ts}, e.data)}));
+          showAdminEntries(mapped);
+        }
+      }
+
+      function showAdminEntries(entries){
+        let html = '<div class="admin-wrap">';
+        html += `<h2>Réponses — ${entries.length}</h2>`;
+        html += '<div class="stat">';
+        html += `<div class="card">Réponses totales: <strong>${entries.length}</strong></div>`;
+        html += '</div>';
+        html += '<h3 style="margin-top:18px">Détails des réponses</h3>';
+        html += '<table><thead><tr><th>#</th><th>ID / Horodatage</th><th>Données</th></tr></thead><tbody>';
+        entries.forEach((e,i)=>{
+          const ts = e.data._ts || e.data.ts || '';
+          html += `<tr><td>${i+1}</td><td>${e.id} / ${ts ? new Date(ts).toLocaleString() : ''}</td><td><pre style="white-space:pre-wrap">${JSON.stringify(e.data,null,2)}</pre></td></tr>`;
+        });
+        html += '</tbody></table>';
+        html += '</div>';
+        adminArea.innerHTML = html;
+      }
+
+      // If firebaseAuth available and user already signed in, render admin, else show login
+      if(window.firebaseAuth){
+        window.firebaseAuth.onAuthStateChanged(user=>{
+          if(user) renderAdmin();
+          else renderLogin();
+        });
+      } else {
+        // fallback: no firebase -> show localStorage view directly
+        const raw = localStorage.getItem('ndaSurvey');
+        const entries = raw ? JSON.parse(raw) : [];
+        const mapped = entries.map((e,i)=>({id:i,data:Object.assign({ts:e.ts}, e.data)}));
+        showAdminEntries(mapped);
+      }
+    </script>
+  </body>
+</html>

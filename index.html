@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Ndako na Ngai — Sondage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <div class="logo"><i class="fas fa-house"></i></div>
+          <div class="title">Ndako na Ngai</div>
+        </div>
+          <div class="header-actions">
+            <a href="admin.html" class="btn admin-link">Admin</a>
+          </div>
+        </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="container hero-inner">
+          <div class="hero-icon"><i class="fas fa-house-circle-check"></i></div>
+          <h1 class="hero-title">Votre maison, notre mission</h1>
+          <p class="hero-desc">Nous développons une plateforme de gestion immobilière pour le Congo. Aidez-nous à créer la solution dont vous avez vraiment besoin en partageant votre expérience.</p>
+          <a class="btn cta" href="#survey">Participer au sondage ↓</a>
+
+          <div class="features">
+            <div class="card feature-card">
+              <div class="feature-emoji"><i class="fas fa-person-shelter"></i></div>
+              <h3>Location</h3>
+              <p>Trouvez votre maison idéale</p>
+            </div>
+            <div class="card feature-card">
+              <div class="feature-emoji"><i class="fas fa-sack-dollar"></i></div>
+              <h3>Vente</h3>
+              <p>Achetez en toute confiance</p>
+            </div>
+            <div class="card feature-card">
+              <div class="feature-emoji"><i class="fas fa-mobile-screen-button"></i></div>
+              <h3>Simple</h3>
+              <p>Tout depuis votre mobile</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="why container">
+        <h2>Pourquoi ce sondage ?</h2>
+        <p class="muted">Nous voulons comprendre vos besoins réels pour créer une plateforme qui vous ressemble. Votre opinion compte énormément !</p>
+
+        <div class="why-grid">
+          <div class="why-item">
+            <div class="why-icon"><i class="fas fa-search"></i></div>
+            <h4>Comprendre vos défis</h4>
+            <p>Quelles difficultés rencontrez-vous actuellement pour trouver un logement ?</p>
+          </div>
+          <div class="why-item">
+            <div class="why-icon"><i class="fas fa-users"></i></div>
+            <h4>Vos besoins prioritaires</h4>
+            <p>Quelles fonctionnalités sont essentielles pour vous dans une application immobilière ?</p>
+          </div>
+          <div class="why-item">
+            <div class="why-icon"><i class="fas fa-shield-alt"></i></div>
+            <h4>Construire ensemble</h4>
+            <p>Votre participation nous aide à créer une solution adaptée au contexte congolais.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="survey container" id="survey">
+        <div class="survey-card">
+          <h3>Sondage Ndako na Ngai</h3>
+          <p class="muted">Prenez quelques minutes pour nous aider à créer la meilleure plateforme immobilière du Congo.</p>
+
+          <form id="surveyForm">
+            <fieldset class="group">
+              <legend>Informations de base</legend>
+
+              <label for="age">Quelle est votre tranche d'âge ?</label>
+              <select id="age" name="age" required>
+                <option value="">Sélectionnez...</option>
+                <option>Moins de 18</option>
+                <option>18 - 24</option>
+                <option>25 - 34</option>
+                <option>35 - 44</option>
+                <option>45 - 54</option>
+                <option>55 et plus</option>
+              </select>
+
+              <label for="city">Dans quelle ville habitez-vous ?</label>
+              <input id="city" name="city" placeholder="Ex: Brazzaville, Pointe-Noire, Dolisie..." />
+
+              <label for="neighborhood">Dans quel quartier/commune ?</label>
+              <input id="neighborhood" name="neighborhood" placeholder="Ex: Quartier ou commune (toute la République)" />
+
+              <label for="profession">Quelle est votre profession ?</label>
+              <input id="profession" name="profession" placeholder="Ex: Étudiant, Fonctionnaire, Commerçant..." />
+
+              <label for="family">Situation familiale</label>
+              <select id="family" name="family">
+                <option value="">Sélectionnez...</option>
+                <option>Celibataire</option>
+                <option>Marié(e)</option>
+                <option>Famille</option>
+              </select>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>Vos expériences et besoins</legend>
+
+              <label>Rencontrez-vous des difficultés pour trouver un logement ?</label>
+              <div class="radio-row">
+                <label><input type="radio" name="difficulty" value="oui" required> Oui</label>
+                <label><input type="radio" name="difficulty" value="non"> Non</label>
+                <label><input type="radio" name="difficulty" value="parfois"> Parfois</label>
+              </div>
+
+              <label for="mainProblems">Si oui, quelles sont les principales difficultés ? (plusieurs réponses possibles)</label>
+              <div class="checkbox-grid">
+                <label><input type="checkbox" name="problems" value="prix"> Prix trop élevés</label>
+                <label><input type="checkbox" name="problems" value="disponibilite"> Manque d'offres</label>
+                <label><input type="checkbox" name="problems" value="fiabilite"> Fiabilité des annonces</label>
+                <label><input type="checkbox" name="problems" value="paiement"> Options de paiement</label>
+                <label><input type="checkbox" name="problems" value="transport"> Accessibilité / mobilité</label>
+                <label><input type="checkbox" id="problem-autre" name="problems" value="autre"> Autre</label>
+              </div>
+              <input id="problemsOther" name="problemsOther" placeholder="Si autre, décrivez ici" style="display:none;margin-top:8px;border-radius:8px;padding:10px;border:1px solid #e6e9ef;width:100%" />
+
+              <label for="priorityFeatures"><strong>Si vous aviez une application comme Ndako na Ngai, quelles fonctionnalités aimeriez-vous voir ? (cochez tout ce qui s'applique)</strong></label>
+              <div class="checkbox-grid">
+                <label><input type="checkbox" name="features" value="recherche-avancee"> Recherche avancée (filtres)</label>
+                <label><input type="checkbox" name="features" value="messagerie"> Messagerie entre locataires/propriétaires</label>
+                <label><input type="checkbox" name="features" value="verification"> Vérification des annonces / propriétaires</label>
+                <label><input type="checkbox" name="features" value="paiement-en-ligne"> Paiement en ligne / dépôt</label>
+                <label><input type="checkbox" name="features" value="photos"> Photos & visites virtuelles</label>
+                <label><input type="checkbox" name="features" value="support-sms"> Support SMS / notifications</label>
+                <label><input type="checkbox" name="features" value="application-mobile"> Application mobile native</label>
+                <label><input type="checkbox" name="features" value="offline"> Mode hors-ligne / faible connexion</label>
+              </div>
+
+              <label for="otherFeatures">Autres fonctionnalités souhaitées (décrivez)</label>
+              <textarea id="otherFeatures" name="otherFeatures" rows="3" placeholder="Décrivez d'autres besoins ou idées..."></textarea>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>Vos préférences</legend>
+              <label for="budget">Quelle fourchette de budget pour le logement (par mois) ?</label>
+              <select id="budget" name="budget">
+                <option value="">Sélectionnez...</option>
+                <option value="<50000">&lt; 50 000 FCFA</option>
+                <option value="50000-150000">50 000 - 150 000 FCFA</option>
+                <option value="150000-300000">150 000 - 300 000 FCFA</option>
+                <option value=">300000">&gt; 300 000 FCFA</option>
+                <option value="autre">Autre (précisez)</option>
+              </select>
+              <input id="budgetCustom" name="budgetCustom" placeholder="Indiquez votre budget en FCFA" style="display:none;margin-top:8px;border-radius:8px;padding:10px;border:1px solid #e6e9ef;width:100%" />
+
+              <label for="use">Pour quel usage recherchez-vous ?</label>
+              <select id="use" name="use">
+                <option value="">Sélectionnez...</option>
+                <option>Habitation</option>
+                <option>Investissement</option>
+                <option>Travail / Bureau</option>
+              </select>
+
+              <label for="contact">Souhaitez-vous être contacté pour participer à des tests ? (email ou téléphone)</label>
+              <input id="contact" name="contact" placeholder="Email ou téléphone (optionnel)" />
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>Problèmes liés aux démarcheurs / intermédiaires</legend>
+              <label>Avez-vous déjà été sollicité(e) par des démarcheurs ou agences qui demandent des frais pour organiser une visite ?</label>
+              <div class="radio-row">
+                <label><input type="radio" name="demarcheur" value="oui"> Oui</label>
+                <label><input type="radio" name="demarcheur" value="non"> Non</label>
+              </div>
+
+              <div id="demarcheurDetails" style="display:none;margin-top:8px">
+                <label for="demarcheurAmount">Montant demandé (FCFA) approximatif</label>
+                <input id="demarcheurAmount" name="demarcheurAmount" placeholder="Ex: 5000" />
+
+                <label for="demarcheurBehavior">Quel comportement avez-vous observé ? (plusieurs réponses possible)</label>
+                <div class="checkbox-grid">
+                  <label><input type="checkbox" name="demarcheurIssues" value="ne_rend_pas_argent"> Ne rendent pas l'argent</label>
+                  <label><input type="checkbox" name="demarcheurIssues" value="demandent_plus"> Demandent plus tard des frais</label>
+                  <label><input type="checkbox" name="demarcheurIssues" value="montrent_maisons_incorrectes"> Montrent des maisons non conformes</label>
+                  <label><input type="checkbox" name="demarcheurIssues" value="promettent_visite"> Promettent et n'honorent pas</label>
+                  <label><input type="checkbox" name="demarcheurIssues" value="autre"> Autre</label>
+                </div>
+
+                <label for="demarcheurFrequency">À quelle fréquence cela se produit-il ?</label>
+                <select id="demarcheurFrequency" name="demarcheurFrequency">
+                  <option value="">Sélectionnez...</option>
+                  <option>Rarement</option>
+                  <option>Parfois</option>
+                  <option>Souvent</option>
+                </select>
+
+                <label for="demarcheurComments">Commentaires / témoignage (décrivez une expérience)</label>
+                <textarea id="demarcheurComments" name="demarcheurComments" rows="3" placeholder="Décrivez brièvement ce qui s'est passé..."></textarea>
+              </div>
+            </fieldset>
+
+            <div class="actions">
+              <button type="submit" class="btn">Envoyer le sondage</button>
+              <button type="reset" class="btn ghost">Réinitialiser</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">© Ndako na Ngai — Tous droits réservés</div>
+    </footer>
+
+    <div id="toast" class="toast" aria-hidden="true">Merci ! Votre réponse a été enregistrée.</div>
+
+    <!-- Firebase compat SDKs (CDN) - required only if you plan to use Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
