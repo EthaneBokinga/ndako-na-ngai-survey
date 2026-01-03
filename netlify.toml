@@ -1,0 +1,12 @@
+[build]
+  command = ""
+  publish = "/"
+
+[env]
+  FIREBASE_API_KEY = "AIzaSyDIT5gSjnru3DzW47ERfQTvdS3FseK-uiQ"
+  FIREBASE_AUTH_DOMAIN = "ndakonangai-eb3db.firebaseapp.com"
+  FIREBASE_PROJECT_ID = "ndakonangai-eb3db"
+  FIREBASE_STORAGE_BUCKET = "ndakonangai-eb3db.firebasestorage.app"
+  FIREBASE_MESSAGING_SENDER_ID = "235328554738"
+  FIREBASE_APP_ID = "1:235328554738:web:d108e0f086f815de1c326b"
+  FIREBASE_MEASUREMENT_ID = "G-SBC56L8SXN"
