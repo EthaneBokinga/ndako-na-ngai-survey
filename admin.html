@@ -364,17 +364,100 @@
 
       window.showDetail = function(idx){
         const e = allEntries[idx];
-        const detail = JSON.stringify(e.data, null, 2);
+        const d = e.data;
+        const ts = d._ts || 0;
+        const date = ts ? new Date(ts).toLocaleDateString('fr-FR') : '—';
+        
+        // Build formatted HTML
+        let html = '';
+        
+        // Basic Info
+        html += '<div style="text-align:left;margin-bottom:16px">';
+        html += '<h4 style="margin:0 0 12px;color:#1f2937;font-size:15px"><i class="fas fa-user-circle" style="color:#2563eb;margin-right:6px"></i>Informations personnelles</h4>';
+        html += '<div style="background:#f8fafc;padding:12px;border-radius:8px;font-size:13px;line-height:1.6;color:#374151">';
+        html += d.age ? `<p style="margin:6px 0"><strong>Âge:</strong> ${d.age}</p>` : '';
+        html += d.city ? `<p style="margin:6px 0"><strong>Ville:</strong> ${d.city}</p>` : '';
+        html += d.neighborhood ? `<p style="margin:6px 0"><strong>Quartier:</strong> ${d.neighborhood}</p>` : '';
+        html += d.profession ? `<p style="margin:6px 0"><strong>Profession:</strong> ${d.profession}</p>` : '';
+        html += d.family ? `<p style="margin:6px 0"><strong>Situation familiale:</strong> ${d.family}</p>` : '';
+        html += d.contact ? `<p style="margin:6px 0"><strong>Contact:</strong> ${d.contact}</p>` : '';
+        html += '</div></div>';
+        
+        // Experiences & Needs
+        html += '<div style="margin-bottom:16px">';
+        html += '<h4 style="margin:0 0 12px;color:#1f2937;font-size:15px"><i class="fas fa-tasks" style="color:#f59e0b;margin-right:6px"></i>Expériences</h4>';
+        html += '<div style="background:#f8fafc;padding:12px;border-radius:8px;font-size:13px;line-height:1.6;color:#374151">';
+        html += d.difficulty ? `<p style="margin:6px 0"><strong>Difficulté à trouver logement:</strong> ${d.difficulty}</p>` : '';
+        if(d.problems && d.problems.length){
+          html += `<p style="margin:6px 0"><strong>Difficultés:</strong> ${d.problems.join(', ')}</p>`;
+        }
+        if(d.problemsOther){
+          html += `<p style="margin:6px 0"><strong>Autre difficulté:</strong> ${d.problemsOther}</p>`;
+        }
+        html += '</div></div>';
+        
+        // Features
+        if(d.features && d.features.length){
+          html += '<div style="margin-bottom:16px">';
+          html += '<h4 style="margin:0 0 12px;color:#1f2937;font-size:15px"><i class="fas fa-star" style="color:#10b981;margin-right:6px"></i>Fonctionnalités souhaitées</h4>';
+          html += '<div style="background:#f8fafc;padding:12px;border-radius:8px;font-size:13px;line-height:1.6;color:#374151">';
+          html += '<ul style="margin:0;padding-left:20px">';
+          d.features.forEach(f => {
+            const labels = {
+              'recherche-avancee': 'Recherche avancée',
+              'messagerie': 'Messagerie',
+              'verification': 'Vérification',
+              'paiement-en-ligne': 'Paiement en ligne',
+              'photos': 'Photos & visites virtuelles',
+              'support-sms': 'Support SMS',
+              'application-mobile': 'Application mobile',
+              'offline': 'Mode hors-ligne'
+            };
+            html += `<li style="margin:4px 0">${labels[f] || f}</li>`;
+          });
+          html += '</ul></div></div>';
+        }
+        
+        // Budget & Preferences
+        html += '<div style="margin-bottom:16px">';
+        html += '<h4 style="margin:0 0 12px;color:#1f2937;font-size:15px"><i class="fas fa-wallet" style="color:#8b5cf6;margin-right:6px"></i>Préférences</h4>';
+        html += '<div style="background:#f8fafc;padding:12px;border-radius:8px;font-size:13px;line-height:1.6;color:#374151">';
+        html += d.budget ? `<p style="margin:6px 0"><strong>Budget:</strong> ${d.budget}</p>` : '';
+        html += d.use ? `<p style="margin:6px 0"><strong>Usage:</strong> ${d.use}</p>` : '';
+        html += '</div></div>';
+        
+        // Demarcheurs
+        if(d.demarcheur){
+          html += '<div style="margin-bottom:16px">';
+          html += '<h4 style="margin:0 0 12px;color:#1f2937;font-size:15px"><i class="fas fa-exclamation-triangle" style="color:#dc2626;margin-right:6px"></i>Démarcheurs</h4>';
+          html += '<div style="background:#f8fafc;padding:12px;border-radius:8px;font-size:13px;line-height:1.6;color:#374151">';
+          html += d.demarcheur ? `<p style="margin:6px 0"><strong>Sollicité:</strong> ${d.demarcheur}</p>` : '';
+          if(d.demarcheur === 'oui'){
+            html += d.demarcheurAmount ? `<p style="margin:6px 0"><strong>Montant:</strong> ${d.demarcheurAmount} FCFA</p>` : '';
+            html += d.demarcheurFrequency ? `<p style="margin:6px 0"><strong>Fréquence:</strong> ${d.demarcheurFrequency}</p>` : '';
+            if(d.demarcheurIssues && d.demarcheurIssues.length){
+              html += `<p style="margin:6px 0"><strong>Problèmes:</strong> ${d.demarcheurIssues.join(', ')}</p>`;
+            }
+            html += d.demarcheurComments ? `<p style="margin:6px 0"><strong>Commentaire:</strong> "${d.demarcheurComments}"</p>` : '';
+          }
+          html += '</div></div>';
+        }
+        
+        // Metadata
+        html += '<div style="text-align:center;padding:12px;background:#f0f9ff;border-radius:8px;margin-top:16px;font-size:12px;color:#0c4a6e">';
+        html += `<p style="margin:0"><i class="fas fa-clock"></i> Enregistré le ${date}</p>`;
+        html += `<p style="margin:4px 0 0"><small>ID: ${e.id}</small></p>`;
+        html += '</div>';
+        
         Swal.fire({
-          title: `<i class="fas fa-file-lines" style="color:#2563eb"></i> Réponse #${idx+1}`,
-          html: `<pre style="text-align:left;background:#f8fafc;padding:16px;border-radius:8px;overflow:auto;max-height:400px;font-size:12px;color:#1f2937">${detail}</pre>`,
+          title: `<i class="fas fa-document-alt" style="color:#2563eb"></i> Réponse #${idx+1}`,
+          html: html,
           width: '90%',
-          maxWidth: '600px',
+          maxWidth: '700px',
           showConfirmButton: true,
           confirmButtonText: 'Fermer',
           confirmButtonColor: '#2563eb',
-          allowOutsideClick: true,
-          didOpen: () => { document.querySelector('.swal2-modal').style.borderRadius = '12px'; }
+          allowOutsideClick: true
         });
       };
 
