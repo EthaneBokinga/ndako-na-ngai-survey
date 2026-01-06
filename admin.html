@@ -30,7 +30,15 @@
       th { padding: 10px; text-align: left; font-weight: 600; color: #374151; border-bottom: 2px solid #e6e9ef; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
       td { padding: 10px; border-bottom: 1px solid #e6e9ef; color: #6b7280; font-size: 12px; }
       tbody tr:hover { background: #f9fafb; }
-      
+
+      /* Responsive cards for mobile: hide table on small screens and show cards */
+      .response-cards { display: none; }
+      .response-card { background: #ffffff; border: 1px solid #eef2f7; padding: 12px; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(15,23,42,0.03); }
+      .response-card .card-row { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+      .response-card .card-meta { font-weight:700; color:#111827; }
+      .response-card .card-body { color:#374151; font-size:13px; }
+      .response-card .card-body p { margin:4px 0; }
+      .response-card .card-actions button { padding:8px 12px; border-radius:8px; }
       .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 16px; }
       .feature-item { background: #f8fafc; padding: 12px; border-radius: 8px; border-left: 4px solid #2563eb; }
       .feature-item strong { color: #1f2937; font-size: 12px; }
@@ -86,14 +94,14 @@
         .location-card p { font-size: 10px; margin: 2px 0; }
         table { font-size: 11px; }
         th, td { padding: 6px; font-size: 10px; }
+        /* On small screens, hide wide table and show card list */
+        table { display: none; }
+        .response-cards { display: block; }
+        .response-card .card-row { flex-direction: column; align-items: flex-start; }
+        .response-card .card-actions { width: 100%; margin-top: 8px; }
+        .response-card .card-actions button { width: 100%; }
         .login { padding: 16px; }
       }
-    </style>
-      .login label { display: block; margin-top: 12px; font-weight: 600; color: #374151; font-size: 13px; }
-      .login input { width: 100%; padding: 10px; border: 1px solid #e6e9ef; border-radius: 6px; font-size: 13px; margin-top: 4px; box-sizing: border-box; }
-      .login input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-      .login button { width: 100%; margin-top: 16px; }
-      .login #loginMsg { margin-top: 12px; color: #dc2626; font-size: 12px; }
     </style>
   </head>
   <body>
@@ -223,18 +231,44 @@
 
       function renderResponsesTab(){
         let html = '<h3>Détails des réponses</h3>';
+        // Desktop table (hidden on small screens)
+        html += '<div class="table-wrapper" style="overflow-x:auto">';
         html += '<table>';
         html += '<thead><tr><th>#</th><th>Date</th><th>Ville</th><th>Âge</th><th>Profession</th><th>Difficulté</th><th>Actions</th></tr></thead><tbody>';
         allEntries.forEach((e,i)=>{
           const ts = e.data._ts || 0;
-          const date = ts ? new Date(ts).toLocaleDateString() : '—';
+          const date = ts ? new Date(ts).toLocaleDateString('fr-FR') : '—';
           const city = e.data.city || '—';
           const age = e.data.age || '—';
           const prof = e.data.profession || '—';
           const diff = e.data.difficulty === 'oui' ? '<span style="color:#dc2626">Oui</span>' : (e.data.difficulty === 'parfois' ? '<span style="color:#f59e0b">Parfois</span>' : '<span style="color:#059669">Non</span>');
-          html += `<tr><td>${i+1}</td><td>${date}</td><td>${city}</td><td>${age}</td><td>${prof}</td><td>${diff}</td><td><button class="btn ghost" onclick="showDetail(${i})" style="padding:4px 8px;font-size:11px">Voir</button></td></tr>`;
+          html += `<tr><td>${i+1}</td><td>${date}</td><td>${city}</td><td>${age}</td><td>${prof}</td><td>${diff}</td><td><button class="btn ghost" onclick="showDetail(${i})" style="padding:6px 10px;font-size:12px">Voir</button></td></tr>`;
         });
-        html += '</tbody></table>';
+        html += '</tbody></table></div>';
+
+        // Mobile card list (visible on small screens)
+        html += '<div class="response-cards">';
+        allEntries.forEach((e,i)=>{
+          const ts = e.data._ts || 0;
+          const date = ts ? new Date(ts).toLocaleDateString('fr-FR') : '—';
+          const city = e.data.city || '—';
+          const age = e.data.age || '—';
+          const prof = e.data.profession || '—';
+          const diff = e.data.difficulty === 'oui' ? 'Oui' : (e.data.difficulty === 'parfois' ? 'Parfois' : 'Non');
+          html += `<div class="response-card">
+            <div class="card-row">
+              <div class="card-meta">#${i+1} — ${date}</div>
+              <div class="card-actions"><button class="btn" onclick="showDetail(${i})">Voir</button></div>
+            </div>
+            <div class="card-body">
+              <p><strong>Ville:</strong> ${city}</p>
+              <p><strong>Âge:</strong> ${age} — <strong>Profession:</strong> ${prof}</p>
+              <p><strong>Difficulté:</strong> ${diff}</p>
+            </div>
+          </div>`;
+        });
+        html += '</div>';
+
         return html;
       }
 
