@@ -94,10 +94,41 @@
               </select>
 
               <label for="city">Dans quelle ville habitez-vous ?</label>
-              <input id="city" name="city" placeholder="Ex: Brazzaville, Pointe-Noire, Dolisie..." />
+              <select id="city" name="city">
+                <option value="">Sélectionnez une ville...</option>
+                <option value="Brazzaville">Brazzaville</option>
+                <option value="Pointe-Noire">Pointe-Noire</option>
+                <option value="Dolisie">Dolisie</option>
+                <option value="Nkayi">Nkayi</option>
+                <option value="Kinkala">Kinkala</option>
+                <option value="Ouesso">Ouesso</option>
+                <option value="Impfondo">Impfondo</option>
+                <option value="Owando">Owando</option>
+                <option value="Oyo">Oyo</option>
+                <option value="Gamboma">Gamboma</option>
+                <option value="Autre">Autre</option>
+              </select>
 
               <label for="neighborhood">Dans quel quartier/commune ?</label>
-              <input id="neighborhood" name="neighborhood" placeholder="Ex: Quartier ou commune (toute la République)" />
+              <select id="neighborhood" name="neighborhood">
+                <option value="">Sélectionnez un quartier...</option>
+                <optgroup label="Brazzaville">
+                  <option value="Poto-Poto">Poto-Poto</option>
+                  <option value="Bacongo">Bacongo</option>
+                  <option value="Madibou">Madibou</option>
+                </optgroup>
+                <optgroup label="Pointe-Noire">
+                  <option value="Tié-Tié">Tié-Tié</option>
+                  <option value="Loandjili">Loandjili</option>
+                  <option value="Mvou-Mvou">Mvou-Mvou</option>
+                </optgroup>
+                <optgroup label="Dolisie">
+                  <option value="Centre">Centre</option>
+                  <option value="Horizon">Horizon</option>
+                </optgroup>
+                <option value="Autre">Autre</option>
+              </select>
+              <input id="neighborhoodCustom" name="neighborhoodCustom" placeholder="Si autre, précisez le quartier" style="display:none;margin-top:8px;border-radius:8px;padding:10px;border:1px solid #e6e9ef;width:100%" />
 
               <label for="profession">Quelle est votre profession ?</label>
               <input id="profession" name="profession" placeholder="Ex: Étudiant, Fonctionnaire, Commerçant..." />

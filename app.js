@@ -22,6 +22,16 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
+  // Neighborhood custom handling: show text input when 'Autre' selected
+  const neighborhoodSelect = document.getElementById('neighborhood');
+  const neighborhoodCustom = document.getElementById('neighborhoodCustom');
+  if(neighborhoodSelect && neighborhoodCustom){
+    neighborhoodSelect.addEventListener('change', function(){
+      if(this.value === 'Autre') neighborhoodCustom.style.display = 'block';
+      else neighborhoodCustom.style.display = 'none';
+    });
+  }
+
   if(demarcheurRadios && demarcheurDetails){
     demarcheurRadios.forEach(r=>{
       r.addEventListener('change', function(){
@@ -78,6 +88,17 @@ document.addEventListener('DOMContentLoaded', function(){
     if(demFreq && demFreq.value) payload.demarcheurFrequency = demFreq.value;
     const demComments = document.getElementById('demarcheurComments');
     if(demComments && demComments.value.trim()) payload.demarcheurComments = demComments.value.trim();
+
+    // neighborhood custom handling
+    const neighSelect = document.getElementById('neighborhood');
+    if(neighSelect){
+      if(neighSelect.value === 'Autre'){
+        const custom = document.getElementById('neighborhoodCustom');
+        payload.neighborhood = custom && custom.value.trim() ? custom.value.trim() : '';
+      } else {
+        payload.neighborhood = neighSelect.value || '';
+      }
+    }
 
     // For demo: save in localStorage and show toast
     try{
