@@ -31,6 +31,32 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
+  // Admin link visibility: show Admin button only for authenticated users with role 'admin'
+  const adminLink = document.getElementById('adminLink');
+  if(window.firebaseAuth && adminLink){
+    window.firebaseAuth.onAuthStateChanged(async user => {
+      try{
+        if(!user){
+          adminLink.style.display = 'none';
+          return;
+        }
+        // check admins collection for this uid
+        const doc = await window.firebaseDB.collection('admins').doc(user.uid).get();
+        if(doc.exists && doc.data() && doc.data().role === 'admin'){
+          adminLink.style.display = 'inline-flex';
+        } else {
+          adminLink.style.display = 'none';
+        }
+      }catch(err){
+        console.warn('Erreur vérification admin role', err);
+        adminLink.style.display = 'none';
+      }
+    });
+  } else if(adminLink){
+    // If firebase not available, hide link
+    adminLink.style.display = 'none';
+  }
+
   function showToast(msg = 'Merci ! Votre réponse a été enregistrée.', ms = 3500){
     toast.textContent = msg;
     toast.style.display = 'block';
