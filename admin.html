@@ -158,17 +158,53 @@
       }
 
       function renderAdmin(){
-        adminArea.innerHTML = '<div class="admin-wrap"><h2>Chargement...</h2></div>';
-        if(window.firebaseDB){
-          window.firebaseDB.collection('surveys').orderBy('_ts','desc').get().then(qs=>{
-            allEntries = qs.docs.map(d=>({id:d.id,data:d.data()}));
+        adminArea.innerHTML = '<div class="admin-wrap"><h2>Chargement...</h2><div id="adminDebug" style="margin-top:12px;color:#374151;font-size:13px"></div></div>';
+
+        // Debug info: expose whether Firebase objects are present
+        try{ console.log('DEBUG firebaseApp:', window.firebaseApp, 'firebaseAuth:', window.firebaseAuth, 'firebaseDB:', window.firebaseDB); }catch(e){console.warn('DEBUG log error', e);}
+
+        // Provide a manual reload button to force reading from Firestore for debugging
+        function tryLoadFromFirestore(){
+          const dbg = document.getElementById('adminDebug');
+          if(window.firebaseDB){
+            dbg.textContent = 'Tentative de lecture depuis Firestore...';
+            window.firebaseDB.collection('surveys').orderBy('_ts','desc').get().then(qs=>{
+              allEntries = qs.docs.map(d=>({id:d.id,data:d.data()}));
+              console.log('DEBUG: loaded', allEntries.length, 'documents from Firestore');
+              showAdminDashboard();
+            }).catch(err=>{
+              console.error('Erreur lecture Firestore:', err);
+              dbg.innerHTML = 'Erreur Firestore: '+ (err && err.message ? err.message : String(err)) + '. Chargement depuis localStorage.';
+              // fallback to localStorage so admin can still see data
+              const raw = localStorage.getItem('ndaSurvey');
+              allEntries = raw ? JSON.parse(raw).map((e,i)=>({id:i,data:Object.assign({_ts:e.ts}, e.data)})) : [];
+              showAdminDashboard();
+            });
+          } else {
+            dbg.textContent = 'Firebase non disponible dans ce contexte — chargement depuis localStorage.';
+            const raw = localStorage.getItem('ndaSurvey');
+            allEntries = raw ? JSON.parse(raw).map((e,i)=>({id:i,data:Object.assign({_ts:e.ts}, e.data)})) : [];
             showAdminDashboard();
-          }).catch(err=>{ adminArea.innerHTML = '<div class="login"><h3>Erreur</h3><p>'+err.message+'</p></div>'; });
-        } else {
-          const raw = localStorage.getItem('ndaSurvey');
-          allEntries = raw ? JSON.parse(raw).map((e,i)=>({id:i,data:Object.assign({_ts:e.ts}, e.data)})) : [];
-          showAdminDashboard();
+          }
         }
+
+        // add a small button to force reload from cloud (useful to test if Firestore is reachable)
+        const dbgEl = document.getElementById('adminDebug');
+        if(dbgEl){
+          const btn = document.createElement('button');
+          btn.textContent = 'Charger depuis Firestore';
+          btn.style.marginTop = '8px';
+          btn.style.padding = '8px 10px';
+          btn.style.borderRadius = '8px';
+          btn.style.border = '1px solid #e6e9ef';
+          btn.style.background = '#fff';
+          btn.style.cursor = 'pointer';
+          btn.addEventListener('click', tryLoadFromFirestore);
+          dbgEl.appendChild(btn);
+        }
+
+        // initial attempt
+        tryLoadFromFirestore();
       }
 
       function showAdminDashboard(){

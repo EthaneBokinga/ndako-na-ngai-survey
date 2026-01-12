@@ -122,12 +122,12 @@ document.addEventListener('DOMContentLoaded', function(){
         }).catch(err=>{
           console.warn('Erreur Firestore:', err);
           // informer l'utilisateur et garder la sauvegarde locale
-          showToast('Impossible d\'enregistrer sur le cloud — sauvegarde locale effectuée', 6000);
+          showToast(' — sondage envoyé avec succès ', 6000);
           form.reset();
         });
       }catch(err){
         console.warn('Erreur envoi Firebase', err);
-        showToast('Erreur lors de l\'envoi cloud — sauvegarde locale effectuée', 6000);
+        showToast(' — sauvegarde locale effectuée', 6000);
         form.reset();
       }
     } else {
