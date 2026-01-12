@@ -369,7 +369,7 @@
         const date = ts ? new Date(ts).toLocaleDateString('fr-FR') : '—';
         
         // Build formatted HTML
-        let html = '';
+          let html = '';
         
         // Basic Info
         html += '<div style="text-align:left;margin-bottom:16px">';
@@ -449,16 +449,77 @@
         html += `<p style="margin:4px 0 0"><small>ID: ${e.id}</small></p>`;
         html += '</div>';
         
-        Swal.fire({
-          title: `<i class="fas fa-document-alt" style="color:#2563eb"></i> Réponse #${idx+1}`,
-          html: html,
-          width: '90%',
-          maxWidth: '700px',
-          showConfirmButton: true,
-          confirmButtonText: 'Fermer',
-          confirmButtonColor: '#2563eb',
-          allowOutsideClick: true
-        });
+        // If SweetAlert (Swal) is available use it, otherwise show a lightweight fallback modal
+        try{
+          if(typeof Swal !== 'undefined' && Swal.fire){
+            Swal.fire({
+              title: `<i class="fas fa-document-alt" style="color:#2563eb"></i> Réponse #${idx+1}`,
+              html: html,
+              width: '90%',
+              maxWidth: '700px',
+              showConfirmButton: true,
+              confirmButtonText: 'Fermer',
+              confirmButtonColor: '#2563eb',
+              allowOutsideClick: true
+            });
+            return;
+          }
+        }catch(e){
+          console.warn('Swal unavailable or blocked:', e);
+        }
+
+        // Fallback modal (simple, no external lib) — works when CDN is blocked
+        (function fallbackModal(titleHtml, contentHtml){
+          const overlay = document.createElement('div');
+          overlay.style.position = 'fixed';
+          overlay.style.inset = '0';
+          overlay.style.background = 'rgba(0,0,0,0.45)';
+          overlay.style.display = 'flex';
+          overlay.style.alignItems = 'center';
+          overlay.style.justifyContent = 'center';
+          overlay.style.zIndex = 99999;
+
+          const box = document.createElement('div');
+          box.style.background = '#fff';
+          box.style.borderRadius = '10px';
+          box.style.maxWidth = '700px';
+          box.style.width = '90%';
+          box.style.padding = '18px';
+          box.style.boxShadow = '0 12px 40px rgba(2,6,23,0.2)';
+          box.style.maxHeight = '85vh';
+          box.style.overflow = 'auto';
+
+          const header = document.createElement('div');
+          header.innerHTML = titleHtml;
+          header.style.marginBottom = '12px';
+
+          const content = document.createElement('div');
+          content.innerHTML = contentHtml;
+
+          const foot = document.createElement('div');
+          foot.style.display = 'flex';
+          foot.style.justifyContent = 'flex-end';
+          foot.style.marginTop = '12px';
+
+          const btn = document.createElement('button');
+          btn.textContent = 'Fermer';
+          btn.style.background = '#2563eb';
+          btn.style.color = '#fff';
+          btn.style.border = 'none';
+          btn.style.padding = '8px 12px';
+          btn.style.borderRadius = '8px';
+          btn.style.cursor = 'pointer';
+
+          btn.addEventListener('click', ()=>{ document.body.removeChild(overlay); });
+          overlay.addEventListener('click', (ev)=>{ if(ev.target === overlay) document.body.removeChild(overlay); });
+
+          foot.appendChild(btn);
+          box.appendChild(header);
+          box.appendChild(content);
+          box.appendChild(foot);
+          overlay.appendChild(box);
+          document.body.appendChild(overlay);
+        })(`<i class="fas fa-document-alt" style="color:#2563eb"></i> Réponse #${idx+1}`, html);
       };
 
       if(window.firebaseAuth){
