@@ -100,33 +100,40 @@ document.addEventListener('DOMContentLoaded', function(){
       }
     }
 
-    // For demo: save in localStorage and show toast
+    // Sauvegarde locale comme sauvegarde de secours
     try{
       const store = JSON.parse(localStorage.getItem('ndaSurvey')||'[]');
       store.push({ts:Date.now(), data:payload});
       localStorage.setItem('ndaSurvey', JSON.stringify(store));
+      console.log('Enregistré localement');
     }catch(err){
       console.warn('LocalStorage erreur',err);
     }
 
-    // If Firebase Firestore is configured, push the response there as well
-    try{
-      if(window.firebaseDB){
-        // prepare a copy for Firestore (flat fields preferred)
+    // Tentative d'envoi vers Firestore si configuré.
+    if(window.firebaseDB){
+      try{
         const doc = Object.assign({}, payload);
         doc._ts = Date.now();
-        // Firestore add
         window.firebaseDB.collection('surveys').add(doc).then(()=>{
           console.log('Envoyé vers Firestore');
+          showToast('Merci — envoyé au cloud', 3500);
+          form.reset();
         }).catch(err=>{
           console.warn('Erreur Firestore:', err);
+          // informer l'utilisateur et garder la sauvegarde locale
+          showToast('Impossible d\'enregistrer sur le cloud — sauvegarde locale effectuée', 6000);
+          form.reset();
         });
+      }catch(err){
+        console.warn('Erreur envoi Firebase', err);
+        showToast('Erreur lors de l\'envoi cloud — sauvegarde locale effectuée', 6000);
+        form.reset();
       }
-    }catch(err){
-      console.warn('Erreur envoi Firebase', err);
+    } else {
+      // Pas de Firestore : utilisateur en local/demo
+      showToast();
+      form.reset();
     }
-
-    showToast();
-    form.reset();
   });
 });
