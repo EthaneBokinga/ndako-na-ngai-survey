@@ -75,6 +75,21 @@ input[type="text"],input[type="email"],select,textarea,input{
 .btn{padding:10px 16px;border-radius:8px}
 .btn.ghost{background:transparent;border:1px solid #d1d5db;color:#111}
 
+/* Bouton encadré pour 'Envoyer le sondage' */
+.btn.framed{
+  background:transparent;
+  color:var(--primary-1);
+  border:2px solid var(--primary-1);
+  padding:10px 18px;
+  border-radius:10px;
+  box-shadow:0 6px 18px rgba(43,61,214,0.06);
+  transition:all 150ms ease;
+}
+.btn.framed:hover{
+  background:rgba(43,61,214,0.06);
+  transform:translateY(-2px);
+}
+
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.3);display:none}
 
 .site-footer{padding:20px 0;text-align:center;color:var(--muted)}
