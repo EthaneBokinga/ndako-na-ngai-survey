@@ -18,9 +18,16 @@ if(typeof firebase !== 'undefined' && firebaseConfig.apiKey && firebaseConfig.ap
     firebase.initializeApp(firebaseConfig);
     // expose la db pour les scripts
     window.firebaseApp = firebase;
-    window.firebaseDB = firebase.firestore();
-    window.firebaseAuth = firebase.auth();
-    console.log('Firebase initialisé');
+    try{
+      window.firebaseDB = firebase.firestore();
+    }catch(e){ console.warn('Impossible d\'initialiser Firestore', e); }
+    // firebase.auth may not be present if auth SDK not loaded in the page
+    try{
+      if(typeof firebase.auth === 'function' || firebase.auth){
+        window.firebaseAuth = firebase.auth();
+      }
+    }catch(e){ console.warn('firebase.auth unavailable', e); }
+    console.log('Firebase initialisé (DB/auth exposés quand disponibles)');
   }catch(err){
     console.warn('Erreur initialisation Firebase', err);
   }

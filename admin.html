@@ -114,6 +114,7 @@
         <div class="brand"><div class="logo"><i class="fas fa-house"></i></div><div class="title">Admin — Ndako na Ngai</div></div>
         <div class="header-actions">
           <a href="index.html" class="btn ghost">← Retour</a>
+          <button onclick="window.open('analyse-intelligente.html', '_blank')" style="margin-left:12px;padding:8px 14px;background:linear-gradient(90deg,#4f46e5,#7c3aed);color:#fff;border-radius:10px;border:none;cursor:pointer;font-weight:700">🧠 Analyse Intelligente</button>
         </div>
       </div>
     </header>
@@ -558,8 +559,60 @@
         })(`<i class="fas fa-document-alt" style="color:#2563eb"></i> Réponse #${idx+1}`, html);
       };
 
-      if(window.firebaseAuth){
-        window.firebaseAuth.onAuthStateChanged(user=>{ user ? renderAdmin() : renderLogin(); });
+      // Helper: create/remove the Analyse Intelligente button
+      function createAnalysisButton(){
+        const header = document.querySelector('.header-actions');
+        if(!header) return;
+        if(document.getElementById('btnAnalysisOpen')) return;
+        const btn = document.createElement('button');
+        btn.id = 'btnAnalysisOpen';
+        btn.textContent = '🧠 Analyse Intelligente';
+        btn.style.marginLeft = '12px';
+        btn.style.padding = '8px 14px';
+        btn.style.background = 'linear-gradient(90deg,#4f46e5,#7c3aed)';
+        btn.style.color = '#fff';
+        btn.style.borderRadius = '10px';
+        btn.style.border = 'none';
+        btn.style.cursor = 'pointer';
+        btn.style.fontWeight = '700';
+        btn.addEventListener('click', ()=> window.open('analyse-intelligente.html','_blank'));
+        header.appendChild(btn);
+      }
+
+      function removeAnalysisButton(){
+        const ex = document.getElementById('btnAnalysisOpen');
+        if(ex) ex.remove();
+      }
+
+      // Vérifie si l'utilisateur est administrateur en lisant /admins/{uid}
+      async function checkAndShowAnalysisButton(user){
+        removeAnalysisButton();
+        if(!user) return;
+        try{
+          // nécessite que window.firebaseDB soit initialisé et que les règles permettent la lecture
+          if(window.firebaseDB){
+            const doc = await window.firebaseDB.collection('admins').doc(user.uid).get();
+            if(doc.exists && doc.data && doc.data().role === 'admin'){
+              createAnalysisButton();
+              return;
+            }
+          }
+        }catch(e){
+          console.warn('Erreur lors de la vérification admin:', e);
+        }
+      }
+
+      if(window.firebaseAuth && typeof window.firebaseAuth.onAuthStateChanged === 'function'){
+        window.firebaseAuth.onAuthStateChanged(async user=>{
+          if(user){
+            renderAdmin();
+            // après affichage, vérifier si user est admin puis injecter le bouton
+            await checkAndShowAnalysisButton(user);
+          } else {
+            renderLogin();
+            removeAnalysisButton();
+          }
+        });
       } else {
         const raw = localStorage.getItem('ndaSurvey');
         allEntries = raw ? JSON.parse(raw).map((e,i)=>({id:i,data:Object.assign({_ts:e.ts}, e.data)})) : [];
