@@ -8,6 +8,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <!-- Librairies pour export PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-gray-50" id="root"></body>
 
@@ -179,7 +182,7 @@ function render(){
 
     root.innerHTML = `
         <div class="min-h-screen p-4">
-            <div class="max-w-7xl mx-auto">
+            <div id="exportArea" class="max-w-7xl mx-auto">
                 <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-6 mb-4 text-white flex justify-between items-center">
                     <div>
                         <h1 class="text-3xl font-bold">Analyse Terminée ✅</h1>
@@ -188,6 +191,7 @@ function render(){
                     <div style="display:flex;gap:12px;align-items:center">
                         <button onclick="window.location.href='admin.html'" class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-bold">← Retour Admin</button>
                         <button onclick="location.reload()" class="bg-white text-indigo-600 px-6 py-3 rounded-lg font-bold">🔄 Recharger</button>
+                        <button class="exportPdfBtn bg-white text-indigo-600 px-4 py-2 rounded-lg font-bold" onclick="exportPdf()">⬇️ Exporter PDF</button>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-lg mb-4">
@@ -198,6 +202,7 @@ function render(){
                 <div>${getContent()}</div>
             </div>
         </div>
+        <button class="exportPdfBtn fixed bottom-6 right-6 bg-indigo-600 text-white px-4 py-3 rounded-full shadow-lg hidden sm:block" onclick="exportPdf()" title="Exporter la page en PDF">⬇️</button>
     `;
 }
 
@@ -272,7 +277,46 @@ function getContent(){
     }
     return '';
 }
-</script>
+
+async function exportPdf(){
+    try{
+        const el = document.getElementById('exportArea') || document.getElementById('root');
+        const btns = document.querySelectorAll('.exportPdfBtn');
+        btns.forEach(b=>{ try{ b.disabled = true; b.dataset._oldText = b.innerText; b.innerText = '⏳ Préparation...'; b.classList.remove('hidden'); }catch(_){}});
+
+        const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, scrollY: -window.scrollY });
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf || {};
+        if(!jsPDF){ throw new Error('jsPDF non disponible'); }
+
+        const pdf = new jsPDF('p','mm','a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgProps = pdf.getImageProperties(imgData);
+        const imgWidth = pdfWidth;
+        const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+        let position = 0;
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+
+        if(imgHeight > pdfHeight){
+            const totalPages = Math.ceil(imgHeight / pdfHeight);
+            for(let i=1;i<totalPages;i++){
+                pdf.addPage();
+                position = -pdfHeight * i;
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            }
+        }
+
+        pdf.save('analyse.pdf');
+    }catch(e){
+        alert('Erreur export PDF: '+(e && e.message?e.message:String(e)));
+        console.error(e);
+    }finally{
+        const btns = document.querySelectorAll('.exportPdfBtn');
+        btns.forEach(b=>{ try{ b.disabled = false; b.innerText = b.dataset._oldText || '⬇️ Exporter PDF'; }catch(_){}});
+    }
+}
 </script>
 <script>
 // Affiche l'UI initiale dès que le DOM est prêt
